@@ -1,3 +1,30 @@
-.idea
+# Python
+__pycache__/
 *.pyc
-__pycache__
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+.venv/
+.env/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.sqlite3
+*.db
+secrets.yml
+.env
+
+# Django media/static
+/mediafiles/
+/staticfiles/
