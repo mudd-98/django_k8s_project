@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv   # PV의 고유 이름
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage   # kubectl get sc에서 확인한 이름
+  capacity:
+    storage: 1Gi                    # PVC 요청과 일치해야 함
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/k8s-data/postgres"  # kube-node1에 실제로 만든 폴더 경로
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kube-node1              # PV가 존재하는 노드 이름

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc   # PVC 이름
+spec:
+  storageClassName: local-storage   # 02-db-pv.yaml의 StorageClass와 동일하게 지정
+  accessModes:
+    - ReadWriteOnce                 # 하나의 Pod만 접근 가능 (DB에 적합)
+  resources:
+    requests:
+      storage: 1Gi                   # PV의 capacity와 일치해야 함

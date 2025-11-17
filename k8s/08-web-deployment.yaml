@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-deployment
+spec:
+  replicas: 2   # Django 앱 Pod를 2개 실행 (고가용성 확보)
+  selector:
+    matchLabels:
+      app: django-web
+  template:
+    metadata:
+      labels:
+        app: django-web   # Pod 라벨
+    spec:
+      containers:
+        - name: django-web-container
+          image: mudd0/django_k8s_project:v1.0.0   # 본인 Docker Hub ID
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000   # Gunicorn 실행 포트
+
+          # Gunicorn 실행 명령어를 직접 지정
+          command: ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-"]
+
+          # 환경변수 주입
+          envFrom:
+            - configMapRef:
+                name: django-config   # 07-web-configmap.yaml
+            - secretRef:
+                name: django-secret   # 06-web-secret.yaml
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret   # 01-db-secret.yaml
+                  key: postgres-password
