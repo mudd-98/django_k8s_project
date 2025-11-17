@@ -26,7 +26,7 @@ services:
     environment:
       - DJANGO_SECRET_KEY=local-dev-secret-key-12345
       - DJANGO_DEBUG=True
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,192.168.56.11
       # DB 접속 정보 (db 서비스의 'environment'와 일치)
       - POSTGRES_DB=django_db
       - POSTGRES_USER=django_user
