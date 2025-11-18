@@ -11,4 +11,4 @@ data:
 
   # Django 설정
   DJANGO_DEBUG: "False"               # 운영 환경에서는 반드시 False
-  DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,192.168.56.11,board.k8s.local"           # 테스트용으로 모두 허용 (운영에서는 도메인만 지정)
+  DJANGO_ALLOWED_HOSTS: "*"           # 테스트용으로 모두 허용 (운영에서는 도메인만 지정)
