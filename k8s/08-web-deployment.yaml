@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: django-web-container
-          image: mudd0/django_k8s_project:v1.7
+          image: mudd0/django_k8s_project:v1.8
           imagePullPolicy: Always
           ports:
             - containerPort: 8000   # Gunicorn 실행 포트
