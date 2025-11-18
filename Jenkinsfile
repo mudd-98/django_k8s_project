@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKERHUB_ID = 'mudd0'
-        IMAGE_NAME = 'django_k8s_project'
-        IMAGE_TAG = "v1.${BUILD_NUMBER}"
-        GIT_REPO_URL = 'https://github.com/mudd-98/django_k8s_project.git'
+        IMAGE_NAME   = 'django_k8s_project'
+        IMAGE_TAG    = "v1.${BUILD_NUMBER}"
+        GITHUB_ID    = 'mudd-98'
     }
 
     stages {
@@ -32,10 +32,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'github-push-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
                     sh "git config --global user.email 'jenkins@ci.cd'"
                     sh "git config --global user.name 'Jenkins-Bot'"
-                    sh "git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/mudd-98/django_k8s_project.git temp_manifest_repo"
+                    sh "git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/${GITHUB_ID}/django_k8s_project.git temp_manifest_repo"
 
                     dir('temp_manifest_repo') {
-                        sh "sed -i 's|image: mudd-98/django_k8s_project:.*|image: ${DOCKERHUB_ID}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/08-web-deployment.yaml"
+                        sh "git checkout master"
+                        sh "sed -i 's|image: ${DOCKERHUB_ID}/django_k8s_project:.*|image: ${DOCKERHUB_ID}/${IMAGE_NAME}:${IMAGE_TAG}|g' k8s/08-web-deployment.yaml"
                         sh "git add k8s/08-web-deployment.yaml"
                         sh "git commit -m 'CI: Update image tag to ${IMAGE_TAG}'"
                         sh "git push origin master"
@@ -46,7 +47,7 @@ pipeline {
 
         stage('Clean up Docker Image') {
             steps {
-                echo "4. 로컬 이미지 삭제."
+                echo "4. 로컬 이미지 및 임시 폴더 삭제."
                 sh "docker rmi ${DOCKERHUB_ID}/${IMAGE_NAME}:${IMAGE_TAG}"
                 sh "rm -rf temp_manifest_repo"
             }
