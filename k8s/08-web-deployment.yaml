@@ -61,4 +61,3 @@ spec:
               mountPath: /etc/nginx/conf.d/nginx.conf
               subPath: nginx.conf
               readOnly: true
-EOF
