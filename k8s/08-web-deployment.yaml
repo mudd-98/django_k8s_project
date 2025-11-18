@@ -21,7 +21,7 @@ spec:
       
       containers:
         - name: django-web-container
-          image: mudd0/django_k8s_project:v1.34
+          image: mudd0/django_k8s_project:v1.35
           imagePullPolicy: Always
           
           command: ["/bin/sh", "-c"]
