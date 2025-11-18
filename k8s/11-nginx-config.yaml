@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-nginx-config
+data:
+  # Nginx 설정 파일 내용
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name board.k8s.local;
+
+        # 1. /static/ 경로 (CSS/JS)
+        location /static/ {
+            # Pod 내부의 공유 볼륨에서 파일을 직접 서빙
+            alias /app/staticfiles/;
+        }
+
+        # 2. / (그 외 모든 앱 요청)
+        location / {
+            # Pod 내부의 Gunicorn 컨테이너(localhost:8000)에게 넘김
+            proxy_pass http://localhost:8000;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+        }
+    }
+EOF

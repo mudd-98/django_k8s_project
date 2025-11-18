@@ -12,15 +12,21 @@ spec:
       labels:
         app: django-web   # Pod 라벨
     spec:
+      volumes:
+        - name: static-files
+          emptyDir: {}
+        - name: nginx-config-volume
+          configMap:
+            name: django-nginx-config
+      
       containers:
         - name: django-web-container
           image: mudd0/django_k8s_project:v1.28
           imagePullPolicy: Always
-          ports:
-            - containerPort: 8000   # Gunicorn 실행 포트
-
-          # Gunicorn 실행 명령어를 직접 지정
-          command: ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-"]
+          
+          command: ["/bin/sh", "-c"]
+          args:
+            - "python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
 
           # 환경변수 주입
           envFrom:
@@ -34,3 +40,25 @@ spec:
                 secretKeyRef:
                   name: postgres-secret   # 01-db-secret.yaml
                   key: postgres-password
+          volumeMounts:
+            - name: static-files
+              mountPath: /app/staticfiles # (여기에 CSS를 모음)
+          
+        # --- (!!!) 컨테이너 2 (신규): Nginx (사이드카) ---
+        - name: nginx-sidecar
+          image: nginx:1.25-alpine # 경량 Nginx 이미지 사용
+          ports:
+            # (!!!) Nginx가 Pod의 '정문'인 80번 포트를 담당
+            - containerPort: 80
+          volumeMounts:
+            # 1. (읽기 전용) CSS 공유 공간을 마운트
+            - name: static-files
+              mountPath: /app/staticfiles # (여기서 CSS를 읽어감)
+              readOnly: true
+            # 2. (읽기 전용) Nginx 설정 파일을 마운트
+            - name: nginx-config-volume
+              # (Step 1에서 만든 ConfigMap의 'nginx.conf' 키를 가져옴)
+              mountPath: /etc/nginx/conf.d/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+EOF
