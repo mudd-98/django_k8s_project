@@ -32,6 +32,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'github-push-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
                     sh "git config --global user.email 'jenkins@ci.cd'"
                     sh "git config --global user.name 'Jenkins-Bot'"
+                    sh "rm -rf temp_manifest_repo"
                     sh "git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/${GITHUB_ID}/django_k8s_project.git temp_manifest_repo"
 
                     dir('temp_manifest_repo') {
