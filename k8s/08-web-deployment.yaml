@@ -40,6 +40,8 @@ spec:
                 secretKeyRef:
                   name: postgres-secret   # 01-db-secret.yaml
                   key: postgres-password
+            - name: DJANGO_ALLOWED_HOSTS   ### 수정: ALLOWED_HOSTS 환경변수 추가
+              value: "board.k8s.local"
           volumeMounts:
             - name: static-files
               mountPath: /app/staticfiles # (여기에 CSS를 모음)
