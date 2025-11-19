@@ -7,7 +7,7 @@ data:
   nginx.conf: |
     server {
         listen 80;
-        server_name _;
+        server_name board.k8s.local;
 
         location /static/ {
             alias /app/staticfiles/;
