@@ -7,11 +7,9 @@ data:
   nginx.conf: |
     server {
         listen 80;
-        server_name board.k8s.local;
+        server_name _;
 
-        # 1. /static/ 경로 (CSS/JS)
         location /static/ {
-            # Pod 내부의 공유 볼륨에서 파일을 직접 서빙
             alias /app/staticfiles/;
         }
 
